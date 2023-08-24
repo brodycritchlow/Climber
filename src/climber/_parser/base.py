@@ -10,8 +10,9 @@ DecoratedFunc = Callable[Concatenate[str, Param], RetType]
 
 
 class ParserArgumentError(Exception):
-    ...
-
+    """
+    Error occured when trying to parse name
+    """
 
 ParserArgumentError.__module__ = "Climber"
 
@@ -42,3 +43,5 @@ class BaseParser(BaseModel, ABC):
             return wrapper
 
         return inner
+
+
