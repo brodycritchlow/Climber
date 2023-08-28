@@ -1,18 +1,21 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Concatenate, Optional, ParamSpec, TypeVar
+from typing import Callable, Concatenate, Optional, ParamSpec, TypeVar, Any, List
+from typing_extensions import Self
 
 from pydantic import BaseModel
 
-Param = ParamSpec("Param")
-RetType = TypeVar("RetType")
-OriginalFunc = Callable[Param, RetType]
-DecoratedFunc = Callable[Concatenate[str, Param], RetType]
-
+RT = TypeVar('RT', bound=Any)  # return type
 
 class ParserArgumentError(Exception):
     """
+<<<<<<< HEAD
     Error occured when trying to parse name
     """
+=======
+    Error occured while Parsing.
+    """
+    ...
+>>>>>>> db5ac55 (Fix Typehinting)
 
 ParserArgumentError.__module__ = "Climber"
 
@@ -24,21 +27,24 @@ class BaseParser(BaseModel, ABC):
     """
 
     def parser(
-        self, name: str = "", required: Optional[bool] = False
-    ) -> Callable[[OriginalFunc], DecoratedFunc]:
+        self, name: str = "", all_required: Optional[bool] = False
+    ) -> Callable[[Callable[..., RT]], Callable[..., RT]]:
         """
         Parser decorator, that creates the command line function.
         """
 
-        def inner(func: OriginalFunc) -> DecoratedFunc:
-            def wrapper(*args, **kwargs):
+        def inner(func: Callable[..., RT]) -> Callable[..., RT]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 annotations = func.__annotations__
+
                 try:
                     __type = annotations[name]
                 except KeyError as exc:
                     raise ParserArgumentError(
                         f"{repr(name)} is not a valid argument, valid names: {list(annotations.keys())}"
                     ) from exc
+
+                return (__type )
 
             return wrapper
 
